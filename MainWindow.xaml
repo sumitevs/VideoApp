@@ -1,0 +1,131 @@
+﻿<Window x:Class="Intuit.VideoApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Intuit.VideoApp" xmlns:viewmodel="clr-namespace:Intuit.VideoApp.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+        mc:Ignorable="d"
+        Title="Intuit Video" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+
+
+        <!--local folder column-->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label HorizontalAlignment="Center">
+                Local Drive
+            </Label>
+            <TextBox Grid.Row="1" Name="txtBoxfolderPath" 
+                     Text="{Binding CurrentLocalFolderPath,Mode=OneWay}" />
+            <Button Grid.Row="2" Command="{Binding OpenCommand}">
+                Browse
+            </Button>
+            <ListBox Grid.Row="3" 
+                     x:Name="listBoxFileList" 
+                     ItemsSource="{Binding LocalFileCollection}" 
+                     SelectedItem="{Binding SelectedFile,Mode=TwoWay}"
+                     DisplayMemberPath="Name">
+                <!--<ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Grid Margin="0,2" >
+                            <TextBlock Text="{Binding Name}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>-->
+            </ListBox>
+        </Grid>
+
+        <!--Cloud folder column-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label HorizontalAlignment="Center">
+                Azure Drive
+            </Label>
+            <TextBox Grid.Row="1" Name="txtBoxCloudPath" 
+                     Text="{Binding CurrentCloudFolderPath}"/>
+            <Button Grid.Row="2" Command="{Binding OpenCloudCommand}">
+                Browse
+            </Button>
+            <ListBox Grid.Row="3" 
+                     x:Name="listBoxCloudFileList" 
+                     ItemsSource="{Binding CloudFileCollection}" 
+                     SelectedItem="{Binding SelectedFile,Mode=TwoWay}"
+                     DisplayMemberPath="Name">
+            </ListBox>
+        </Grid>
+
+        <!--Video display column-->
+        <StackPanel Grid.Column="2">
+            <Label HorizontalAlignment="Center">
+                Big Screen
+            </Label>
+            <StackPanel HorizontalAlignment = "Center" 
+                        VerticalAlignment = "Center" 
+                        Visibility="{Binding IsFileSelected,Converter={StaticResource BooleanToVisibilityConv}}">
+                <MediaElement Name = "selectedMedia" 
+                                  Source = "{Binding SelectedFile.Path}"
+                                  LoadedBehavior = "Manual" 
+                                  Width = "591" Height = "274" />
+                <Grid Margin = "5,10,5,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            x:Name = "buttonPlayPause" 
+                                Content = "Play" 
+                                Margin = "0,0,10,0" 
+                                Padding = "5" 
+                                Click = "ButtonPlayPause_Click" />
+                    <Button Grid.Column="1"
+                            x:Name = "buttonMute" 
+                                Content = "Mute" 
+                                Margin = "0,0,10,0" 
+                                Padding = "5" 
+                                Click = "ButtonMute_Click" />
+                    <Button Grid.Column="2"
+                            Content = "Upload" 
+                                Margin = "0,0,10,0" 
+                                Padding = "5" 
+                                Click = "ButtonUpload_Click" 
+                                IsEnabled="{Binding SelectedFile.CanUpload}"/>
+                    <Button Grid.Column="3"
+                            x:Name = "buttonDownload" 
+                                Content = "Download" 
+                                Padding = "5" 
+                                Command="{Binding DownloadCommand}"
+                                IsEnabled="{Binding SelectedFile.CanDownload}"/>
+                </Grid>
+                <StackPanel Orientation = "Horizontal" Margin = "0,10,0,0">
+                    <Label>Path:</Label>
+                    <TextBlock  Text="{Binding SelectedFile.Path}" 
+                                TextWrapping="Wrap" 
+                                Margin="0,5,0,0"
+                                Width="400"/>
+                </StackPanel>
+                <StackPanel Orientation = "Horizontal">
+                    <Label>Size(in MB):</Label>
+                    <Label Content="{Binding SelectedFile.Size}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
